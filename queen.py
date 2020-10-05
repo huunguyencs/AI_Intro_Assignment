@@ -10,11 +10,34 @@ def isSafe(col):
             return False
     return True
 
+def place(pos):
+    if pos>=0 and pos<n:
+        queen.append(pos)
+
+def unplace():
+    if len(queen) > 0:
+        queen.pop(len(queen)-1)
+
+def isGoal():
+    return len(queen) == n
+
+
 def BFS():
     pass
 
+
 def DFS():
-    pass
+    if isGoal():
+        return True
+    else:
+        for i in range(n):
+            if isSafe(i):
+                place(i)
+                res = DFS()
+                if res:
+                    return res
+                unplace()
+    return False
 
 def Heuristic():
     pass
@@ -30,16 +53,13 @@ def DisplayBoard():
 
 
 
-
-
-
 if __name__ == "__main__":
 
     n = int(input("Input n: "))
 
     # Init queen array
-    queen = [0,1,2,3]
-
+    queen = []
+    DFS()
     DisplayBoard()
 
     
