@@ -1,6 +1,6 @@
-import numpy
+import numpy, datetime
 
-global n
+
 global queen
 
 def isSafe(col):
@@ -23,7 +23,7 @@ def isGoal():
 
 
 def BFS():
-    pass
+    return False
 
 
 def DFS():
@@ -40,26 +40,64 @@ def DFS():
     return False
 
 def Heuristic():
-    pass
+    return False
 
 def DisplayBoard():
     for pos in queen:
         for x in range(pos):
-            print("0", end=" ")
+            print("-", end=" ")
         print("1",end=" ")
         for x in range(pos+1,n):
-            print("0", end=" ")
+            print("-", end=" ")
         print()
+
+def solution():
+    res = False
+    global n
+    global option
+    print("Nhap lua chon giai thuat:")
+    print("1. DFS")
+    print("2. BFS")
+    print("3. Heuristic")
+    option = int(input("Nhap: "))
+    n = int(input("Input n: "))
+    if option == 1:
+        start = datetime.datetime.now()
+        res = DFS()
+        end = datetime.datetime.now()
+    elif option == 2:
+        start = datetime.datetime.now()
+        res = BFS()
+        end = datetime.datetime.now()
+    elif option == 3:
+        start = datetime.datetime.now()
+        res = Heuristic()
+        end = datetime.datetime.now()
+    else:
+        print("Moi nhap lai.")
+        print("---------------------------------------------------------")
+        solution()
+    if res:
+        DisplayBoard()
+        print("Time: " + str(end-start))
+    else:
+        print("No solution")
 
 
 
 if __name__ == "__main__":
 
-    n = int(input("Input n: "))
+    print("---------------------------------------------------------")
+    print("-                   N-Queen Problem                     -")
+    print("---------------------------------------------------------")
+    
 
+    
     # Init queen array
     queen = []
-    DFS()
-    DisplayBoard()
+    
+    solution()
+    
+    
 
     
