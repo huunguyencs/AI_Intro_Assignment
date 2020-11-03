@@ -5,6 +5,10 @@ from copy import deepcopy
 
 TEMPERATURE = 4000
 
+
+############################
+#  UN_HEURISTIC ALGORITHM  #
+############################
 # Check queen is safe
 def isSafe(col):
     numOfQueen = len(queen)
@@ -76,6 +80,10 @@ def DisplayBoard():
         print()
 
 
+############################
+#   HEURISTIC ALGORITHM    #  
+############################
+
 def threat_calculate(n):
     '''Combination formular. It is choosing two queens in n queens'''
     if n < 2:
@@ -131,9 +139,6 @@ def cost(chess_board):
 
 
 def simulated_annealing():
-    '''Simulated Annealing'''
-
-
 
     solution_found = False
     answer = create_board(n)
@@ -150,7 +155,7 @@ def simulated_annealing():
         print_chess_board(answer)
         return True
 
-    # To avoid recounting when can not find a better state
+    # Begin algorithm
     cost_answer = cost(answer)
 
     t = TEMPERATURE
@@ -179,7 +184,6 @@ def simulated_annealing():
 
 
 def print_chess_board(board):
-    '''Print the chess board'''
     for _, row in board.items():
         for _ in range(row):
             print("-", end=" ")
@@ -188,11 +192,8 @@ def print_chess_board(board):
             print("-", end=" ")
         print()
 
-
-
-
 def solution():
-    
+
     res = False
     global n
     global option
@@ -225,6 +226,10 @@ def solution():
         print("No solution")
 
 
+
+######################
+#        MAIN        #
+######################
 
 if __name__ == "__main__":
 
