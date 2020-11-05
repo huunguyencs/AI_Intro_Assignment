@@ -2,4 +2,9 @@ from functools import reduce
 
 M = [1,2,3,7,8]
 
-print(reduce(lambda x,y: x + y,M,0))
+
+    
+
+r = sum(list(i+1 for i in M))
+
+print(r)
