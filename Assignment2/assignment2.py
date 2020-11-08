@@ -98,6 +98,9 @@ class Employee:
         Tinh toan loi nhuan cua nhan vien
         """
         return self.__calRev() - self.__calCost()
+    
+    def append(self,order:Order):
+        self.list.append(order)
 
 
 def writeOutput(file_output,out):
@@ -125,11 +128,11 @@ def assign(file_input, file_output):
         listEmploy.append(tmp)
 
     ## BEGIN TEST
-    listEmploy[0].list.append(Orders[3])
-    listEmploy[0].list.append(Orders[4])
-    listEmploy[1].list.append(Orders[0])
-    listEmploy[2].list.append(Orders[2])
-    listEmploy[2].list.append(Orders[1])
+    listEmploy[0].append(Orders[1])
+    listEmploy[0].append(Orders[4])
+    listEmploy[1].append(Orders[0])
+    listEmploy[2].append(Orders[2])
+    listEmploy[2].append(Orders[3])
     ## END TEST
 
     ## SOLUTION
