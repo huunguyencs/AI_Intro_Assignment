@@ -1,12 +1,14 @@
 ## Bai tap lon so 2 mon Nhap mon AI - HCMUT - 2020-2021
 ### Giang vien: Vuong Ba Thinh
 ### Sinh vien thuc hien:
-- Nguyen Van Huu
-- Huynh Trung Nghia
+#### 1. Nguyen Van Huu
+#### 2. Huynh Trung Nghia
 
 ## De tai: Gan don hang va sap lo trinh cho nhan vien giao hang
-I. De bai: [Xem tai day](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/BTL2.pdf)
-II. Thuc hien:
+#### I. De bai:
+[Xem tai day](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/BTL2.pdf)
+
+#### II. Thuc hien:
 1. Cau truc chuong trinh
 - Chuong trinh chinh la [assignment2.py](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/assignment2.py) gom:
     - Class Order dai dien cho don hang
