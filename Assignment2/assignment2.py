@@ -213,5 +213,7 @@ def assign(file_input, file_output):
     #write output
     writeOutput(file_output,listEmploy)
 
+if __name__ == "__main__":
+    assign('input.txt', 'output.txt')
 
-assign('input.txt', 'output.txt')
+
