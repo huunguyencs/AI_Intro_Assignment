@@ -1,7 +1,9 @@
 # Add necessary libraries
-import math, numpy, random, time
+import numpy, random, time, math
 from functools import reduce
+from copy import deepcopy
 
+TEMPERATURE = 1000
 
 def distance(pos1,pos2):
     """
@@ -11,18 +13,20 @@ def distance(pos1,pos2):
 
 def readInput(file_input):
     """
-    pos: int - Vi tri cua kho
-    M: int - So luong nhan vien
-    N: int - So luong don hang
+    Doc file input - return pos, M, N, orders \n
+    pos: int - Vi tri cua kho \n
+    M: int - So luong nhan vien \n
+    N: int - So luong don hang \n
     orders: List(Order) - Danh sach cac don hang
     """
     f = open(file_input,"r")
     readline = f.readline()
     pos = [int(x) for x in readline[:-1].split(" ")]
     readline = f.readline()
-    tmp = readline[:-1].split(" ")
-    M = int(tmp[0])
-    N = int(tmp[1])
+    # tmp = readline[:-1].split(" ")
+    # N = int(tmp[0])
+    # M = int(tmp[1])
+    N, M = map(int,readline.split(" "))
     orders = []
     for i in range(N):
         readline = f.readline()
@@ -34,10 +38,10 @@ def readInput(file_input):
 
 class Order:
     """
-    Class dai dien cho cac don hang
-    id: int - chi so cua don hang
-    pos: tuple(int,int) - vi tri can giao cua don hang
-    vol: int - the tich cua don hang
+    Class dai dien cho cac don hang - Order(id, pos, vol, weigth)\n
+    id: int - chi so cua don hang \n
+    pos: tuple(int,int) - vi tri can giao cua don hang \n
+    vol: int - the tich cua don hang \n
     weigth: int - trong luong cua don hang
     """
     def __init__(self,id,pos,vol,weigth):
@@ -58,12 +62,10 @@ class Order:
 
 class Employee:
     """
-    Class dai dien cho cac nhan vien
-    id: int - chi so cua nhan vien
-    pos: tuple(int,int) - vi tri ban dau cua nhan vien
-    list: List(Order) - danh sach chi so cua cac don hang
-    profit: int - loi nhuan cua nhan vien
-    sumOfDis: int - tong khoang cach di chuyen cua nhan vien
+    Class dai dien cho cac nhan vien - Employee(id, list, pos)\n
+    id: int - chi so cua nhan vien \n
+    list: List(Order) - danh sach chi so cua cac don hang \n
+    pos: tuple(int,int) - vi tri ban dau cua nhan vien \n
     """
     
     def __init__(self,id,list,pos):
@@ -75,10 +77,12 @@ class Employee:
         """
         Tinh tong khoang cach cho toan bo don hang cua mot nhan vien
         """
-        dis = distance(self.pos,self.list[0].pos)
-        for i in len(self.list - 1):
-            dis += distance(self.list[i].pos,self.list[i+1].pos)
-        return dis
+        if self.list:
+            dis = distance(self.pos,self.list[0].pos)
+            for i in range(len(self.list) - 1):
+                dis += distance(self.list[i].pos,self.list[i+1].pos)
+            return dis
+        return 0
 
     def __calCost(self):
         """
@@ -100,12 +104,20 @@ class Employee:
         return self.__calRev() - self.__calCost()
     
     def append(self,order:Order):
+        """
+        Them mot order vao danh sach cua nhan vien
+        """
         self.list.append(order)
 
+    def remove(self,order:Order):
+        if order in self.list:
+            self.list.remove(order)
+            return True
+        return False
 
 def writeOutput(file_output,out):
     """
-    Viet output:
+    Viet output \n
     Lay ra chuoi id order cua tung nhan vien va in ra man hinh
     """
     f = open(file_output,"w")
@@ -114,10 +126,68 @@ def writeOutput(file_output,out):
         output = " ".join(out)
         f.write(output + "\n")
 
+def randomOrder(M,N,Orders,listEmploy):
+    """
+    Sap xep ngau nhien order vao danh sach cua nhan vien
+    """
+    for i in range(N):
+        rand = int(random.randrange(0,M))
+        listEmploy[rand].append(Orders[i])
+
+
+def optimal(listEmploy):
+    """
+    Tinh toan luong gia cho giai thuat
+    """
+    lst = [ele.getProfit() for ele in listEmploy]
+    return max(lst) - min(lst)
+
+def changeState(listEmploy):
+    """
+    Change list order for employee
+    """
+    # TODO
+    ...
+
+    return
+
+
+def simulated_annealing(pos,M,N,Orders,listEmploy):
+    """
+    Phuong phap toi luyen mo phong \n
+    pos: int - Vi tri cua kho \n
+    M: int - So luong nhan vien \n
+    N: int - So luong don hang \n
+    Orders: List(Order) - Danh sach cac don hang \n
+    listEmploy: List(Employee) - Danh sach cac nhan vien
+    """
+    randomOrder(M,N,Orders,listEmploy)
+    opt = optimal(listEmploy)
+
+    t = TEMPERATURE
+    sch = 0.99
+
+    # while t > 0 and opt > 0:
+    #     t *= sch
+    #     newState = deepcopy(listEmploy)
+
+    #     # change state for new state
+    #     changeState(newState)
+
+    #     newOpt = optimal(newState)
+    #     delta = newOpt - opt
+
+    #     if delta < 0 or random.uniform(0, 1) < math.exp(-delta / t):
+    #         listEmploy = deepcopy(newState)
+    #         opt = newOpt
+    #     if opt == 0:
+    #         return
+
 
 
 def assign(file_input, file_output):
     """
+    Thuc hien chuc nang chinh trong chuong trinh
     """
     # read input
     pos, M, N, Orders = readInput(file_input)
@@ -128,16 +198,16 @@ def assign(file_input, file_output):
         listEmploy.append(tmp)
 
     ## BEGIN TEST
-    listEmploy[0].append(Orders[1])
-    listEmploy[0].append(Orders[4])
-    listEmploy[1].append(Orders[0])
-    listEmploy[2].append(Orders[2])
-    listEmploy[2].append(Orders[3])
+    # listEmploy[0].append(Orders[1])
+    # listEmploy[0].append(Orders[4])
+    # listEmploy[1].append(Orders[0])
+    # listEmploy[2].append(Orders[2])
+    # listEmploy[2].append(Orders[3])
     ## END TEST
 
     ## SOLUTION
     # TODO
-
+    simulated_annealing(pos,M,N,Orders,listEmploy)
 
 
     #write output

@@ -1,10 +1,6 @@
-from functools import reduce
+import math
 
-M = [1,2,3,7,8]
+a = math.sqrt(5)
 
 
-    
-
-r = sum(list(i+1 for i in M))
-
-print(r)
+print(a)
