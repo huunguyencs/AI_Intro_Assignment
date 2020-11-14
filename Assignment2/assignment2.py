@@ -1,9 +1,9 @@
 # Add necessary libraries
-import numpy, random, time, math
+import numpy, random, time, math, operator
 from functools import reduce
 from copy import deepcopy
 
-TEMPERATURE = 1000
+TEMPERATURE = 100
 
 def distance(pos1,pos2):
     """
@@ -26,11 +26,14 @@ def readInput(file_input):
     # tmp = readline[:-1].split(" ")
     # N = int(tmp[0])
     # M = int(tmp[1])
-    N, M = map(int,readline.split(" "))
+    N, M = map(int,readline.split(' '))
     orders = []
     for i in range(N):
         readline = f.readline()
-        tmp = [int(x) for x in readline[:-1].split(" ")]
+        if i == N - 1:
+            tmp = [int(x) for x in readline.split(' ')]
+        else:
+            tmp = [int(x) for x in readline[:-1].split(' ')]
         order = Order(i,(tmp[0],tmp[1]),tmp[2],tmp[3])
         orders.append(order)
     return pos, M, N, orders
@@ -110,16 +113,34 @@ class Employee:
         self.list.append(order)
 
     def remove(self,order:Order):
+        """
+        Loai bo don hang ra danh sach cua nhan vien
+        """
         if order in self.list:
             self.list.remove(order)
             return True
         return False
+    
+    def numOfOrder(self):
+        """
+        So luong don hang cua nhan vien
+        """
+        return len(self.list)
 
-def writeOutput(file_output,out):
+
+def writeOutput(file_output,out,start,cost):
     """
     Viet output \n
-    Lay ra chuoi id order cua tung nhan vien va in ra man hinh
+    Lay ra chuoi id order cua tung nhan vien va viet vao file output
     """
+    # output ra man hinh
+    t = time.time() - start
+    print('-'*40 +'\nTime run: ' + str(t) + ' s\n' + '-'*40)
+    print('-'*40 +'\nMax - min: ' + str(cost) + '\n' + '-'*40)
+
+    lst = [ele.getProfit() for ele in out]
+    print('-'*40 + '\n' + str(lst) + '\n' + '-'*40)
+
     f = open(file_output,"w")
     for employ in out:
         out = [str(order.id) for order in employ.list]
@@ -131,25 +152,46 @@ def randomOrder(M,N,Orders,listEmploy):
     Sap xep ngau nhien order vao danh sach cua nhan vien
     """
     for i in range(N):
-        rand = int(random.randrange(0,M))
+        rand = random.randint(0,M-1)
         listEmploy[rand].append(Orders[i])
 
 
 def optimal(listEmploy):
     """
-    Tinh toan luong gia cho giai thuat
+    Tinh toan luong gia cho giai thuat \n
+    return: cost, chi so max, chi so min
     """
     lst = [ele.getProfit() for ele in listEmploy]
-    return max(lst) - min(lst)
+    indexMax, maxValue = max(enumerate(lst), key=operator.itemgetter(1))
+    indexMin, minValue = min(enumerate(lst), key=operator.itemgetter(1))
+    cost  = maxValue - minValue
+    return cost, indexMax, indexMin
 
-def changeState(listEmploy):
+def changeState(listEmploy,maxIndex,minIndex):
     """
     Change list order for employee
     """
     # TODO
     ...
+    try:
+        rand = random.randint(0,listEmploy[maxIndex].numOfOrder()-1)
+        order = listEmploy[maxIndex].list[rand]
+        listEmploy[maxIndex].remove(order)
+        listEmploy[minIndex].append(order)
+        return True
+    except:
+        return False
 
-    return
+
+def check(listEmploy,M,N):
+    if N > M:
+        for ele in listEmploy:
+            if ele.list:
+                continue
+            else:
+                return True
+    return False
+
 
 
 def simulated_annealing(pos,M,N,Orders,listEmploy):
@@ -161,27 +203,31 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
     Orders: List(Order) - Danh sach cac don hang \n
     listEmploy: List(Employee) - Danh sach cac nhan vien
     """
+
     randomOrder(M,N,Orders,listEmploy)
-    opt = optimal(listEmploy)
+    opt, iMax, iMin = optimal(listEmploy)
 
     t = TEMPERATURE
     sch = 0.99
 
-    # while t > 0 and opt > 0:
-    #     t *= sch
-    #     newState = deepcopy(listEmploy)
+    while t > 1.e-6 and opt > 0 and check(listEmploy,M,N):
+        t *= sch
+        newState = listEmploy
 
-    #     # change state for new state
-    #     changeState(newState)
+        # change state for new state
+        changeState(newState,iMax,iMin)
 
-    #     newOpt = optimal(newState)
-    #     delta = newOpt - opt
+        newOpt = optimal(newState)
+        delta = newOpt[0] - opt
 
-    #     if delta < 0 or random.uniform(0, 1) < math.exp(-delta / t):
-    #         listEmploy = deepcopy(newState)
-    #         opt = newOpt
-    #     if opt == 0:
-    #         return
+
+        if delta < 0 or random.uniform(0, 1) < math.exp(-delta / t):
+            listEmploy = newState
+            opt, iMax, iMin = newOpt
+        if abs(opt) < 4:
+            break
+    return opt
+
 
 
 
@@ -189,6 +235,7 @@ def assign(file_input, file_output):
     """
     Thuc hien chuc nang chinh trong chuong trinh
     """
+    start = time.time()
     # read input
     pos, M, N, Orders = readInput(file_input)
 
@@ -207,11 +254,12 @@ def assign(file_input, file_output):
 
     ## SOLUTION
     # TODO
-    simulated_annealing(pos,M,N,Orders,listEmploy)
+    cost = simulated_annealing(pos,M,N,Orders,listEmploy)
+
 
 
     #write output
-    writeOutput(file_output,listEmploy)
+    writeOutput(file_output,listEmploy,start,cost)
 
 if __name__ == "__main__":
     assign('input.txt', 'output.txt')

@@ -4,7 +4,7 @@
 #### 1. Nguyen Van Huu
 #### 2. Huynh Trung Nghia
 
-## De tai: Gan don hang va sap lo trinh cho nhan vien giao hang
+## De tai: N-queen problem
 #### I. De bai:
 [Xem tai day](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment1/BTL1.pdf)
 
