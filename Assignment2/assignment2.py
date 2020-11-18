@@ -3,7 +3,7 @@ import numpy, random, time, math, operator
 from functools import reduce
 from copy import deepcopy
 
-TEMPERATURE = 100
+TEMPERATURE = 1000
 
 def distance(pos1,pos2):
     """
@@ -136,7 +136,7 @@ def writeOutput(file_output,out,start,cost):
     # output ra man hinh
     t = time.time() - start
     print('-'*40 +'\nTime run: ' + str(t) + ' s\n' + '-'*40)
-    print('-'*40 +'\nMax - min: ' + str(cost) + '\n' + '-'*40)
+    print('-'*40 +'\nOptomal: ' + str(cost) + '\n' + '-'*40)
 
     lst = [ele.getProfit() for ele in out]
     print('-'*40 + '\n' + str(lst) + '\n' + '-'*40)
@@ -151,9 +151,9 @@ def randomOrder(M,N,Orders,listEmploy):
     """
     Sap xep ngau nhien order vao danh sach cua nhan vien
     """
-    for i in range(N):
-        rand = random.randint(0,M-1)
-        listEmploy[rand].append(Orders[i])
+    # TODO
+    # ...
+    pass
 
 
 def optimal(listEmploy):
@@ -161,36 +161,18 @@ def optimal(listEmploy):
     Tinh toan luong gia cho giai thuat \n
     return: cost, chi so max, chi so min
     """
-    lst = [ele.getProfit() for ele in listEmploy]
-    indexMax, maxValue = max(enumerate(lst), key=operator.itemgetter(1))
-    indexMin, minValue = min(enumerate(lst), key=operator.itemgetter(1))
-    cost  = maxValue - minValue
-    return cost, indexMax, indexMin
+    # TODO
+    # ...
+    pass
 
 def changeState(listEmploy,maxIndex,minIndex):
     """
-    Change list order for employee
+    Ham chuyen doi trang thai
     """
     # TODO
     ...
-    try:
-        rand = random.randint(0,listEmploy[maxIndex].numOfOrder()-1)
-        order = listEmploy[maxIndex].list[rand]
-        listEmploy[maxIndex].remove(order)
-        listEmploy[minIndex].append(order)
-        return True
-    except:
-        return False
+    pass
 
-
-def check(listEmploy,M,N):
-    if N > M:
-        for ele in listEmploy:
-            if ele.list:
-                continue
-            else:
-                return True
-    return False
 
 
 
@@ -204,29 +186,9 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
     listEmploy: List(Employee) - Danh sach cac nhan vien
     """
 
-    randomOrder(M,N,Orders,listEmploy)
-    opt, iMax, iMin = optimal(listEmploy)
-
-    t = TEMPERATURE
-    sch = 0.99
-
-    while t > 1.e-6 and opt > 0 and check(listEmploy,M,N):
-        t *= sch
-        newState = listEmploy
-
-        # change state for new state
-        changeState(newState,iMax,iMin)
-
-        newOpt = optimal(newState)
-        delta = newOpt[0] - opt
-
-
-        if delta < 0 or random.uniform(0, 1) < math.exp(-delta / t):
-            listEmploy = newState
-            opt, iMax, iMin = newOpt
-        if abs(opt) < 4:
-            break
-    return opt
+    # TODO
+    # ...
+    pass
 
 
 
@@ -245,16 +207,16 @@ def assign(file_input, file_output):
         listEmploy.append(tmp)
 
     ## BEGIN TEST
-    # listEmploy[0].append(Orders[1])
-    # listEmploy[0].append(Orders[4])
-    # listEmploy[1].append(Orders[0])
-    # listEmploy[2].append(Orders[2])
-    # listEmploy[2].append(Orders[3])
+    listEmploy[0].append(Orders[1])
+    listEmploy[1].append(Orders[0])
+    listEmploy[2].append(Orders[2])
+    listEmploy[2].append(Orders[3])
     ## END TEST
 
     ## SOLUTION
     # TODO
-    cost = simulated_annealing(pos,M,N,Orders,listEmploy)
+    cost = 0
+    # ...
 
 
 

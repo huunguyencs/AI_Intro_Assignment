@@ -1,18 +1,18 @@
-## Bai tap lon so 2 mon Nhap mon AI - HCMUT - 2020-2021
-### Giang vien: Vuong Ba Thinh
-### Sinh vien thuc hien:
-#### 1. Nguyen Van Huu
-#### 2. Huynh Trung Nghia
+## Bài tập lớn số 1 môn Nhập môn AI - năm học 2020-2021 - HCMUT
+### Giảng viên: Vương Bá Thịnh
+### Sinh viên thực hiện:
+#### 1. Nguyễn Văn Hữu
+#### 2. Huỳnh Trung Nghĩa
 
-## De tai: Gan don hang va sap lo trinh cho nhan vien giao hang
-#### I. De bai:
-[Xem tai day](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/BTL2.pdf)
+## Đề tài: Gán đơn hàng và sắp lộ trình cho nhân viên giao hàng
+#### I. Đề bài:
+[Xem tại đây](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/BTL2.pdf)
 
-#### II. Thuc hien:
-1. Cau truc chuong trinh
-- Chuong trinh chinh la [assignment2.py](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/assignment2.py) gom:
-    - Class Order dai dien cho don hang
-    - Class Employee dai dien cho nhan vien
-    - Mot so ham voi chuc nang duoc mo ta trong source code
-2. Phan tich giai thuat
-Thuc hien theo giai thuan toi luyen mo phong (simulated annealing):
+#### II. Thực hiện:
+##### 1. Cấu trúc chương trình
+- Chương trình chính: [assignment2.py](https://github.com/huunguyencs/AI_Intro_Assignment/blob/main/Assignment2/assignment2.py) gom:
+    - Class Order đại diện cho đơn hàng
+    - Class Employee đại diện cho nhân viên
+    - Một số hàm khác có chức năng được mô tả trong source code
+##### 2. Phân tích giải thuật
+Thực hiện theo giải thuật tôi luyện mô phỏng (simulated annealing):
