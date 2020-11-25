@@ -3,13 +3,9 @@ import numpy, random, time, math, operator
 from functools import reduce
 from copy import deepcopy
 
-TEMPERATURE = 1000
+TEMPERATURE = 2000
 
-def distance(pos1,pos2):
-    """
-    Khoang cach giua 2 diem
-    """
-    return math.sqrt((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2)
+
 
 def readInput(file_input):
     """
@@ -76,14 +72,18 @@ class Employee:
         self.pos = pos
         self.list = list
 
+    @staticmethod
+    def distance(pos1,pos2):
+        return math.sqrt((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2)
+
     def __getDis(self):
         """
         Tinh tong khoang cach cho toan bo don hang cua mot nhan vien
         """
         if self.list:
-            dis = distance(self.pos,self.list[0].pos)
+            dis = Employee.distance(self.pos,self.list[0].pos)
             for i in range(len(self.list) - 1):
-                dis += distance(self.list[i].pos,self.list[i+1].pos)
+                dis += Employee.distance(self.list[i].pos,self.list[i+1].pos)
             return dis
         return 0
 
@@ -91,7 +91,7 @@ class Employee:
         """
         Tinh toan chi phi cua nhan vien
         """
-        return (float(self.__getDis())/40)*20 + 10
+        return float(self.__getDis())/2 + 10
 
     
     def __calRev(self):
@@ -135,11 +135,10 @@ def writeOutput(file_output,out,start,cost):
     """
     # output ra man hinh
     t = time.time() - start
-    print('-'*40 +'\nTime run: ' + str(t) + ' s\n' + '-'*40)
-    print('-'*40 +'\nOptomal: ' + str(cost) + '\n' + '-'*40)
+    print('-'*40 +'\nTime run: ' + str(t))
+    print('-'*40 +'\nOptomal: ' + str(cost))
 
-    lst = [ele.getProfit() for ele in out]
-    print('-'*40 + '\n' + str(lst) + '\n' + '-'*40)
+    
 
     f = open(file_output,"w")
     for employ in out:
@@ -153,7 +152,21 @@ def randomOrder(M,N,Orders,listEmploy):
     """
     # TODO
     # ...
-    pass
+    numOrder = N
+
+    order = Orders
+    random.shuffle(order)
+
+    for i in range(M - 1):
+        numOr = random.randint(1,numOrder - (M-i) + 1)
+        for o in order[:numOr]:
+            listEmploy[i].append(o)
+            order.remove(o)
+        numOrder -= numOr
+    for o in order[:numOrder]:
+        listEmploy[M-1].append(o)
+    
+        
 
 
 def optimal(listEmploy):
@@ -163,7 +176,11 @@ def optimal(listEmploy):
     """
     # TODO
     # ...
-    pass
+    lst = [ele.getProfit() for ele in listEmploy]
+    indexMax, maxValue = max(enumerate(lst), key=operator.itemgetter(1))
+    indexMin, minValue = min(enumerate(lst), key=operator.itemgetter(1))
+    cost  = maxValue - minValue
+    return cost, indexMax, indexMin
 
 def changeState(listEmploy,maxIndex,minIndex):
     """
@@ -171,8 +188,38 @@ def changeState(listEmploy,maxIndex,minIndex):
     """
     # TODO
     ...
-    pass
+    if listEmploy[maxIndex].numOfOrder() > 1:
+        rand = random.randint(0,listEmploy[maxIndex].numOfOrder()-1)
+        order = listEmploy[maxIndex].list[rand]
+        listEmploy[maxIndex].remove(order)
+        listEmploy[minIndex].append(order)
+        return True
+    else:
+        randEmp = -1
+        i = 0
+        while randEmp < 0 or listEmploy[randEmp].numOfOrder() > 1:
+            randEmp = random.randint(0,len(listEmploy) - 1)
+            i += 1
+            if i > 1000:
+                break
+        if listEmploy[randEmp].numOfOrder() > 1:
+            rand = random.randint(0,listEmploy[randEmp].numOfOrder()-1)
+            order = listEmploy[randEmp].list[rand]
+            listEmploy[randEmp].remove(order)
+            listEmploy[minIndex].append(order)
+        return True
 
+    return False
+
+
+def checkExit(listEmploy,M,N):
+    """
+    Kiem tra dieu kien dung
+    """
+    lst = [ele.getProfit()<=1.e-2 for ele in listEmploy]
+    if any(lst):
+        return False
+    return True
 
 
 
@@ -188,7 +235,30 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
 
     # TODO
     # ...
-    pass
+    randomOrder(M,N,Orders,listEmploy)
+    opt, iMax, iMin = optimal(listEmploy)
+    t = TEMPERATURE
+    sch = 0.99
+    if N == M:
+        return opt
+    while t > 1.e-100 and not checkExit(listEmploy,M,N):
+        t *= sch
+        newState = listEmploy.copy()
+
+        # change state for new state
+        if not changeState(newState,iMax,iMin):
+            break
+
+        newOpt = optimal(newState)
+        delta = newOpt[0] - opt
+
+        if delta < 0 or random.uniform(0, 1) < math.exp(-delta / t):
+            listEmploy = newState.copy()
+            opt, iMax, iMin = newOpt
+        if opt < 1:
+            break
+    return opt
+
 
 
 
@@ -207,18 +277,20 @@ def assign(file_input, file_output):
         listEmploy.append(tmp)
 
     ## BEGIN TEST
-    listEmploy[0].append(Orders[1])
-    listEmploy[1].append(Orders[0])
-    listEmploy[2].append(Orders[2])
-    listEmploy[2].append(Orders[3])
+    # listEmploy[0].append(Orders[1])
+    # listEmploy[1].append(Orders[0])
+    # listEmploy[2].append(Orders[2])
+    # listEmploy[2].append(Orders[3])
     ## END TEST
 
     ## SOLUTION
     # TODO
-    cost = 0
+    cost = simulated_annealing(pos,M,N,Orders,listEmploy)
     # ...
 
-
+    lst = [ele.getProfit() for ele in listEmploy]
+    print(lst)
+    
 
     #write output
     writeOutput(file_output,listEmploy,start,cost)
