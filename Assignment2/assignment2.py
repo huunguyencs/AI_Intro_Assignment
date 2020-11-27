@@ -3,7 +3,7 @@ import numpy, random, time, math, operator
 from functools import reduce
 from copy import deepcopy
 
-TEMPERATURE = 2000
+TEMPERATURE = 4000
 
 
 
@@ -153,17 +153,30 @@ def randomOrder(M,N,Orders,listEmploy):
     # TODO
     # ...
     numOrder = N
+    agv = N//M
+    add = N%M
 
     order = Orders
     random.shuffle(order)
 
     for i in range(M - 1):
-        numOr = random.randint(1,numOrder - (M-i) + 1)
+        if add > 0:
+            rand = random.random()
+            if rand > 0.5:
+                numOr = agv + 1
+                numOrder -= (agv + 1)
+                add -= 1
+            else:
+                numOr = agv
+                numOrder -= agv
+            
+        else:
+            numOrder = agv
         for o in order[:numOr]:
             listEmploy[i].append(o)
             order.remove(o)
         numOrder -= numOr
-    for o in order[:numOrder]:
+    for o in order:
         listEmploy[M-1].append(o)
     
         
@@ -241,7 +254,7 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
     sch = 0.99
     if N == M:
         return opt
-    while t > 1.e-100 and not checkExit(listEmploy,M,N):
+    while t > 1.e-200 or (not checkExit(listEmploy,M,N)):
         t *= sch
         newState = listEmploy.copy()
 
@@ -255,7 +268,7 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
         if delta < 0 or random.uniform(0, 1) < math.exp(-delta / t):
             listEmploy = newState.copy()
             opt, iMax, iMin = newOpt
-        if opt < 1:
+        if opt < 5:
             break
     return opt
 
