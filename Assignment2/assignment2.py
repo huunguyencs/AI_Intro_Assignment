@@ -139,10 +139,8 @@ def writeOutput(file_output,out,start,cost):
     print("-"*40 + "\nCost: " + str(cost))
 
     f = open(file_output,"w")
-    for employ in out:
-        out = [str(order.id) for order in employ.list]
-        output = " ".join(out)
-        f.write(output + "\n")
+    output = "\n".join([" ".join([str(order.id) for order in employ.list]) for employ in out])
+    f.write(output)
 
 def randomOrder(M,N,Orders,listEmploy):
     """
