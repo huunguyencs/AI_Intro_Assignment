@@ -3,7 +3,7 @@ import numpy, random, time, math, operator
 from functools import reduce
 from copy import deepcopy
 
-TEMPERATURE = 4000
+
 
 
 
@@ -135,10 +135,8 @@ def writeOutput(file_output,out,start,cost):
     """
     # output ra man hinh
     t = time.time() - start
-    print('-'*40 +'\nTime run: ' + str(t))
-    print('-'*40 +'\nOptomal: ' + str(cost))
-
-    
+    print('-'*40 + '\nTime run: ' + str(t))
+    print("-"*40 + "\nCost: " + str(cost))
 
     f = open(file_output,"w")
     for employ in out:
@@ -156,7 +154,7 @@ def randomOrder(M,N,Orders,listEmploy):
     agv = N//M
     add = N%M
 
-    order = Orders
+    order = Orders.copy()
     random.shuffle(order)
 
     for i in range(M - 1):
@@ -169,9 +167,8 @@ def randomOrder(M,N,Orders,listEmploy):
             else:
                 numOr = agv
                 numOrder -= agv
-            
         else:
-            numOrder = agv
+            numOr = agv
         for o in order[:numOr]:
             listEmploy[i].append(o)
             order.remove(o)
@@ -250,11 +247,11 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
     # ...
     randomOrder(M,N,Orders,listEmploy)
     opt, iMax, iMin = optimal(listEmploy)
-    t = TEMPERATURE
+    t = 4000
     sch = 0.99
     if N == M:
         return opt
-    while t > 1.e-200 or (not checkExit(listEmploy,M,N)):
+    while t > 1.e-100 or (not checkExit(listEmploy,M,N)):
         t *= sch
         newState = listEmploy.copy()
 
@@ -272,43 +269,57 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
             break
     return opt
 
+def realCost(listEmploy):
+    cost = 0
+    for i in listEmploy:
+        for j in listEmploy:
+            cost += abs(i.getProfit() - j.getProfit())
+    return cost
 
+def reset(M,pos):
+    listEmploy = []
+    for i in range(M):
+        tmp = Employee(i,[],pos)
+        listEmploy.append(tmp)
+    return listEmploy
 
+def solve(fileInput):
 
+    # read input
+    pos, M, N, Orders = readInput(fileInput)
+    listEmploy = []
+    for i in range(M):
+        tmp = Employee(i,[],pos)
+        listEmploy.append(tmp)
+
+    ## SOLUTION
+    # TODO
+    simulated_annealing(pos,M,N,Orders,listEmploy)
+    # ...
+    cost = realCost(listEmploy)
+
+    return listEmploy, cost
 
 def assign(file_input, file_output):
     """
     Thuc hien chuc nang chinh trong chuong trinh
     """
     start = time.time()
-    # read input
-    pos, M, N, Orders = readInput(file_input)
+    minCost = 9999
+    listAnswer = []
+    for i in range(5):
+        listEmploy, cost = solve(file_input)
+        if minCost > cost:
+            minCost = cost
+            listAnswer = listEmploy.copy()
 
-    listEmploy = []
-    for i in range(M):
-        tmp = Employee(i,[],pos)
-        listEmploy.append(tmp)
-
-    ## BEGIN TEST
-    # listEmploy[0].append(Orders[1])
-    # listEmploy[1].append(Orders[0])
-    # listEmploy[2].append(Orders[2])
-    # listEmploy[2].append(Orders[3])
-    ## END TEST
-
-    ## SOLUTION
-    # TODO
-    cost = simulated_annealing(pos,M,N,Orders,listEmploy)
-    # ...
-
-    lst = [ele.getProfit() for ele in listEmploy]
+    lst = [ele.getProfit() for ele in listAnswer]
     print(lst)
-    
-
     #write output
-    writeOutput(file_output,listEmploy,start,cost)
+    writeOutput(file_output,listAnswer,start,cost)
+
+
 
 if __name__ == "__main__":
     assign('input.txt', 'output.txt')
-
 
