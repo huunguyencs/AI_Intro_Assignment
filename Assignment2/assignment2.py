@@ -249,7 +249,7 @@ def simulated_annealing(pos,M,N,Orders,listEmploy):
     sch = 0.99
     if N == M:
         return opt
-    while t > 1.e-100 or (not checkExit(listEmploy,M,N)):
+    while t > 1.e-100:
         t *= sch
         newState = listEmploy.copy()
 
